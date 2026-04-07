@@ -1,0 +1,8 @@
+$kind: http-request
+name: Mark Task as Done
+method: PATCH
+url: '{{baseUrl}}/tasks/{{taskId}}/done'
+order: 5000
+pathVariables:
+  - key: taskId
+    value: '1'

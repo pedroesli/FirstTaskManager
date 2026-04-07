@@ -1,0 +1,13 @@
+$kind: http-request
+name: Create Task
+method: POST
+url: "{{baseUrl}}/tasks"
+order: 4000
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+        "title": "My new task"
+    }
