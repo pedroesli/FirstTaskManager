@@ -1,0 +1,9 @@
+model = "gpt-5.4"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[features]
+multi_agent = true
+
+[projects."/Users/pedro/Projects/TypeScript/FirstTaskManager"]
+trust_level = "trusted"

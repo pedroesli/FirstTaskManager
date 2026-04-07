@@ -1,0 +1,29 @@
+{
+  "name": "first-task-manager",
+  "version": "1.0.0",
+  "description": "Small REST API for a task manager using Node.js, TypeScript, and Express.",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "keywords": [
+    "nodejs",
+    "typescript",
+    "express",
+    "rest-api",
+    "task-manager"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^24.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.8.3"
+  }
+}
