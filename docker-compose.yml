@@ -1,0 +1,35 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: first-task-manager-api
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      PORT: "3000"
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: task_manager_redis
+      REDIS_DB: "0"
+    ports:
+      - "3000:3000"
+
+  redis:
+    image: redis:7-alpine
+    container_name: first-task-manager-redis
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "task_manager_redis"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "task_manager_redis", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:

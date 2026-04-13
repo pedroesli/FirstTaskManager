@@ -8,7 +8,7 @@ http://localhost:3000
 
 ## Data Model
 
-Tasks are stored in memory and have this shape:
+Tasks are stored in Redis and have this shape:
 
 ```json
 {
@@ -20,7 +20,7 @@ Tasks are stored in memory and have this shape:
 
 ## `GET /health`
 
-Returns a simple health check.
+Returns a simple health check for the API process.
 
 ### Success Response
 
@@ -34,7 +34,7 @@ Status: `200 OK`
 
 ## `GET /tasks`
 
-Returns all tasks currently stored in memory.
+Returns all tasks currently stored in Redis.
 
 ### Success Response
 
@@ -137,7 +137,7 @@ Status: `404 Not Found`
 
 ## `DELETE /tasks/:id`
 
-Deletes a task from memory.
+Deletes a task from Redis.
 
 ### Success Response
 

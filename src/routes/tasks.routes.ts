@@ -1,6 +1,11 @@
-import { Router, Request, Response } from "express";
-import { tasks } from "../data/tasks";
-import { Task } from "../types/task";
+import { NextFunction, Request, RequestHandler, Response, Router } from "express";
+import {
+  createTask,
+  deleteTask,
+  getTaskById,
+  getTasks,
+  markTaskDone
+} from "../data/tasks";
 
 type CreateTaskBody = {
   title?: unknown;
@@ -8,22 +13,23 @@ type CreateTaskBody = {
 
 const router = Router();
 
-const findTaskIndex = (id: number): number =>
-  tasks.findIndex((task) => task.id === id);
-
-const getNextId = (): number =>
-  tasks.reduce((maxId, task) => Math.max(maxId, task.id), 0) + 1;
-
 const isValidTitle = (body: CreateTaskBody): body is { title: string } =>
   typeof body.title === "string" && body.title.trim().length > 0;
 
-router.get("/", (_req: Request, res: Response) => {
-  res.json(tasks);
-});
+const asyncHandler = (
+  handler: (req: Request, res: Response, next: NextFunction) => Promise<void>
+): RequestHandler => (req, res, next) => {
+  void handler(req, res, next).catch(next);
+};
 
-router.get("/:id", (req: Request, res: Response) => {
+router.get("/", asyncHandler(async (_req: Request, res: Response) => {
+  const tasks = await getTasks();
+  res.json(tasks);
+}));
+
+router.get("/:id", asyncHandler(async (req: Request, res: Response) => {
   const id = Number(req.params.id);
-  const task = tasks.find((item) => item.id === id);
+  const task = await getTaskById(id);
 
   if (!task) {
     res.status(404).json({ message: "Task not found" });
@@ -31,9 +37,9 @@ router.get("/:id", (req: Request, res: Response) => {
   }
 
   res.json(task);
-});
+}));
 
-router.post("/", (req: Request<{}, {}, CreateTaskBody>, res: Response) => {
+router.post("/", asyncHandler(async (req: Request<{}, {}, CreateTaskBody>, res: Response) => {
   const body = req.body;
 
   if (
@@ -47,44 +53,32 @@ router.post("/", (req: Request<{}, {}, CreateTaskBody>, res: Response) => {
     return;
   }
 
-  const newTask: Task = {
-    id: getNextId(),
-    title: body.title.trim(),
-    done: false
-  };
-
-  tasks.push(newTask);
+  const newTask = await createTask(body.title.trim());
   res.status(201).json(newTask);
-});
+}));
 
-router.patch("/:id/done", (req: Request, res: Response) => {
+router.patch("/:id/done", asyncHandler(async (req: Request, res: Response) => {
   const id = Number(req.params.id);
-  const taskIndex = findTaskIndex(id);
+  const updatedTask = await markTaskDone(id);
 
-  if (taskIndex === -1) {
+  if (!updatedTask) {
     res.status(404).json({ message: "Task not found" });
     return;
   }
 
-  tasks[taskIndex] = {
-    ...tasks[taskIndex],
-    done: true
-  };
+  res.json(updatedTask);
+}));
 
-  res.json(tasks[taskIndex]);
-});
-
-router.delete("/:id", (req: Request, res: Response) => {
+router.delete("/:id", asyncHandler(async (req: Request, res: Response) => {
   const id = Number(req.params.id);
-  const taskIndex = findTaskIndex(id);
+  const removed = await deleteTask(id);
 
-  if (taskIndex === -1) {
+  if (!removed) {
     res.status(404).json({ message: "Task not found" });
     return;
   }
 
-  tasks.splice(taskIndex, 1);
   res.json({ message: "Task deleted" });
-});
+}));
 
 export default router;

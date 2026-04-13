@@ -8,6 +8,16 @@ Small REST API for managing tasks using Node.js, TypeScript, and Express.
 npm install
 ```
 
+Start Redis locally before running the API. By default the app connects to `127.0.0.1:6379`.
+
+You can override the connection with:
+
+- `REDIS_URL`
+- `REDIS_HOST`
+- `REDIS_PORT`
+- `REDIS_PASSWORD`
+- `REDIS_DB`
+
 ## Run in development
 
 ```bash
@@ -34,6 +44,8 @@ npm start
 - `POST /tasks`
 - `PATCH /tasks/:id/done`
 - `DELETE /tasks/:id`
+
+All task endpoints are backed by Redis.
 
 ## Example request body
 
